@@ -42,6 +42,8 @@ type NodeState = {
   item: any
 }
 
+// eslint-disabled
+
 export default mixins(
   RegistrableProvide('treeview'),
   Themeable
@@ -343,7 +345,7 @@ export default mixins(
 
       const changed = new Map()
 
-      if (this.selectionType !== 'independent') {
+      if (this.selectionType === 'leaf') {
         for (const descendant of this.getDescendants(key)) {
           if (!getObjectValueByPath(this.nodes[descendant].item, this.itemDisabled) || isForced) {
             this.nodes[descendant].isSelected = isSelected
@@ -362,6 +364,33 @@ export default mixins(
           this.nodes[parent].isSelected = calculated.isSelected
           this.nodes[parent].isIndeterminate = calculated.isIndeterminate
           changed.set(parent, calculated.isSelected)
+        }
+      } else if (this.selectionType === 'group') {
+        // Section parent
+        for (const descendant of this.getDescendants(key)) {
+          if (!getObjectValueByPath(this.nodes[descendant].item, this.itemDisabled) || isForced) {
+            this.nodes[descendant].isSelected = isSelected
+            this.nodes[descendant].isIndeterminate = false
+            changed.set(descendant, isSelected)
+          }
+        }
+        this.nodes[key].isSelected = isSelected
+        this.nodes[key].isIndeterminate = false
+        changed.set(key, isSelected)
+        // Section Child
+        for (const parent of this.getParents(key)) {
+          const calculated = this.calculateState(parent, this.nodes)
+          this.nodes[parent].isSelected = calculated.isSelected
+          this.nodes[parent].isIndeterminate = calculated.isIndeterminate
+          changed.set(parent, calculated.isSelected)
+          if (this.nodes[parent].isIndeterminate === false && changed.get(key) === true) {
+            console.log('Drop All Childs')
+            for (const key of this.nodes[parent].children) {
+              this.nodes[key].isSelected = true
+              this.nodes[key].isIndeterminate = false
+              changed.set(key, false)
+            }
+          }
         }
       } else {
         this.nodes[key].isSelected = isSelected

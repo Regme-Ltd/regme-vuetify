@@ -83,9 +83,9 @@ export const VTreeviewNodeProps = {
   shaped: Boolean,
   transition: Boolean,
   selectionType: {
-    type: String as PropType<'leaf' | 'independent'>,
+    type: String as PropType<'leaf' | 'independent' | 'group'>,
     default: 'leaf',
-    validator: (v: string) => ['leaf', 'independent'].includes(v),
+    validator: (v: string) => ['leaf', 'independent', 'group'].includes(v),
   },
 }
 

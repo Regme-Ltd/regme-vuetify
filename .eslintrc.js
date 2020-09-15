@@ -27,7 +27,7 @@ module.exports = {
       'ignoreTemplateLiterals': true,
       'ignoreStrings': true
     }],
-    'max-statements': ['error', 24],
+    'max-statements': ['error', 100],
     'no-console': 'off',
     'comma-dangle': ['error', {
       arrays: 'always-multiline',

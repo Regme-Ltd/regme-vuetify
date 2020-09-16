@@ -10,7 +10,7 @@
   "homepage": "https://vuetifyjs.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Regme-Ltd/vuetify.git",
+    "url": "git+https://github.com/Regme-Ltd/regme-vuetify.git",
     "directory": "packages/vuetify"
   },
   "keywords": [

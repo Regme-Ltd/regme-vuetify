@@ -2,8 +2,8 @@ const shell = require('shelljs')
 
 const alias = {
   'refs/heads/master': 'vuetifyjs.com',
-  'refs/heads/dev': 'dev.vuetifyjs.com',
-  'refs/heads/next': 'ndext.vuetifyjs.com',
+  // 'refs/heads/dev': 'dev.vuetifyjs.com',
+  // 'refs/heads/next': 'ndext.vuetifyjs.com',
 }[process.argv[2]]
 
 if (!alias) {

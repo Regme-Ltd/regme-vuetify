@@ -9,7 +9,8 @@ import { provide as RegistrableProvide } from '../../mixins/registrable'; // Uti
 import { arrayDiff, deepEqual, getObjectValueByPath } from '../../util/helpers';
 import mixins from '../../util/mixins';
 import { consoleWarn } from '../../util/console';
-import { filterTreeItems, filterTreeItem } from './util/filterTreeItems';
+import { filterTreeItems, filterTreeItem } from './util/filterTreeItems'; // eslint-disabled
+
 export default mixins(RegistrableProvide('treeview'), Themeable
 /* @vue/component */
 ).extend({
@@ -327,10 +328,46 @@ export default mixins(RegistrableProvide('treeview'), Themeable
           changed.set(parent, calculated.isSelected);
         }
       } else if (this.selectionType === 'group') {
-        console.log('Group');
+        // Section parent
+        for (const descendant of this.getDescendants(key)) {
+          if (!getObjectValueByPath(this.nodes[descendant].item, this.itemDisabled) || isForced) {
+            this.nodes[descendant].isSelected = isSelected;
+            this.nodes[descendant].isIndeterminate = false;
+            changed.set(descendant, false);
+          }
+        }
+
         this.nodes[key].isSelected = isSelected;
         this.nodes[key].isIndeterminate = false;
-        changed.set(key, isSelected);
+        changed.set(key, isSelected); // Section Child
+
+        for (const parent of this.getParents(key)) {
+          let parentOldState = this.nodes[parent].isSelected;
+          const calculated = this.calculateState(parent, this.nodes);
+          this.nodes[parent].isSelected = calculated.isSelected;
+          this.nodes[parent].isIndeterminate = calculated.isIndeterminate;
+          changed.set(parent, calculated.isSelected);
+
+          if (this.nodes[parent].isIndeterminate === false && changed.get(parent) === true) {
+            for (const key of this.nodes[parent].children) {
+              this.nodes[key].isSelected = true;
+              this.nodes[key].isIndeterminate = false;
+              changed.set(key, false);
+            }
+          } else if (changed.get(key) === false) {
+            if (parentOldState) {
+              for (const child of this.nodes[parent].children) {
+                if (child !== key) {
+                  this.nodes[child].isSelected = true;
+                  this.nodes[child].isIndeterminate = false;
+                  changed.set(child, true);
+                }
+              }
+            }
+
+            parentOldState = this.nodes[parent].isSelected;
+          }
+        }
       } else {
         this.nodes[key].isSelected = isSelected;
         this.nodes[key].isIndeterminate = false;
@@ -339,7 +376,7 @@ export default mixins(RegistrableProvide('treeview'), Themeable
 
       for (const [key, value] of changed.entries()) {
         this.updateVnodeState(key);
-        if (this.selectionType === 'leaf' && this.isParent(key) || this.selectionType === 'group' && this.isParent(key)) continue;
+        if (this.selectionType === 'leaf' && this.isParent(key)) continue;
         value === true ? this.selectedCache.add(key) : this.selectedCache.delete(key);
       }
     },

@@ -47,6 +47,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+// eslint-disabled
 var _default2 = (0, _mixins.default)((0, _registrable.provide)('treeview'), _themeable.default
 /* @vue/component */
 ).extend({
@@ -479,41 +480,161 @@ var _default2 = (0, _mixins.default)((0, _registrable.provide)('treeview'), _the
           }
         }
       } else if (this.selectionType === 'group') {
-        console.log('Group');
+        // Section parent
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
+
+        try {
+          for (var _iterator5 = this.getDescendants(key)[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var _descendant = _step5.value;
+
+            if (!(0, _helpers.getObjectValueByPath)(this.nodes[_descendant].item, this.itemDisabled) || isForced) {
+              this.nodes[_descendant].isSelected = isSelected;
+              this.nodes[_descendant].isIndeterminate = false;
+              changed.set(_descendant, false);
+            }
+          }
+        } catch (err) {
+          _didIteratorError5 = true;
+          _iteratorError5 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+              _iterator5.return();
+            }
+          } finally {
+            if (_didIteratorError5) {
+              throw _iteratorError5;
+            }
+          }
+        }
+
         this.nodes[key].isSelected = isSelected;
         this.nodes[key].isIndeterminate = false;
-        changed.set(key, isSelected);
+        changed.set(key, isSelected); // Section Child
+
+        var _iteratorNormalCompletion6 = true;
+        var _didIteratorError6 = false;
+        var _iteratorError6 = undefined;
+
+        try {
+          for (var _iterator6 = this.getParents(key)[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+            var _parent = _step6.value;
+            var parentOldState = this.nodes[_parent].isSelected;
+
+            var _calculated2 = this.calculateState(_parent, this.nodes);
+
+            this.nodes[_parent].isSelected = _calculated2.isSelected;
+            this.nodes[_parent].isIndeterminate = _calculated2.isIndeterminate;
+            changed.set(_parent, _calculated2.isSelected);
+
+            if (this.nodes[_parent].isIndeterminate === false && changed.get(_parent) === true) {
+              var _iteratorNormalCompletion7 = true;
+              var _didIteratorError7 = false;
+              var _iteratorError7 = undefined;
+
+              try {
+                for (var _iterator7 = this.nodes[_parent].children[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                  var _key = _step7.value;
+                  this.nodes[_key].isSelected = true;
+                  this.nodes[_key].isIndeterminate = false;
+                  changed.set(_key, false);
+                }
+              } catch (err) {
+                _didIteratorError7 = true;
+                _iteratorError7 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
+                    _iterator7.return();
+                  }
+                } finally {
+                  if (_didIteratorError7) {
+                    throw _iteratorError7;
+                  }
+                }
+              }
+            } else if (changed.get(key) === false) {
+              if (parentOldState) {
+                var _iteratorNormalCompletion8 = true;
+                var _didIteratorError8 = false;
+                var _iteratorError8 = undefined;
+
+                try {
+                  for (var _iterator8 = this.nodes[_parent].children[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                    var child = _step8.value;
+
+                    if (child !== key) {
+                      this.nodes[child].isSelected = true;
+                      this.nodes[child].isIndeterminate = false;
+                      changed.set(child, true);
+                    }
+                  }
+                } catch (err) {
+                  _didIteratorError8 = true;
+                  _iteratorError8 = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
+                      _iterator8.return();
+                    }
+                  } finally {
+                    if (_didIteratorError8) {
+                      throw _iteratorError8;
+                    }
+                  }
+                }
+              }
+
+              parentOldState = this.nodes[_parent].isSelected;
+            }
+          }
+        } catch (err) {
+          _didIteratorError6 = true;
+          _iteratorError6 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
+              _iterator6.return();
+            }
+          } finally {
+            if (_didIteratorError6) {
+              throw _iteratorError6;
+            }
+          }
+        }
       } else {
         this.nodes[key].isSelected = isSelected;
         this.nodes[key].isIndeterminate = false;
         changed.set(key, isSelected);
       }
 
-      var _iteratorNormalCompletion5 = true;
-      var _didIteratorError5 = false;
-      var _iteratorError5 = undefined;
+      var _iteratorNormalCompletion9 = true;
+      var _didIteratorError9 = false;
+      var _iteratorError9 = undefined;
 
       try {
-        for (var _iterator5 = changed.entries()[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var _step5$value = _slicedToArray(_step5.value, 2),
-              _key = _step5$value[0],
-              value = _step5$value[1];
+        for (var _iterator9 = changed.entries()[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+          var _step9$value = _slicedToArray(_step9.value, 2),
+              _key2 = _step9$value[0],
+              value = _step9$value[1];
 
-          this.updateVnodeState(_key);
-          if (this.selectionType === 'leaf' && this.isParent(_key) || this.selectionType === 'group' && this.isParent(_key)) continue;
-          value === true ? this.selectedCache.add(_key) : this.selectedCache.delete(_key);
+          this.updateVnodeState(_key2);
+          if (this.selectionType === 'leaf' && this.isParent(_key2)) continue;
+          value === true ? this.selectedCache.add(_key2) : this.selectedCache.delete(_key2);
         }
       } catch (err) {
-        _didIteratorError5 = true;
-        _iteratorError5 = err;
+        _didIteratorError9 = true;
+        _iteratorError9 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
-            _iterator5.return();
+          if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
+            _iterator9.return();
           }
         } finally {
-          if (_didIteratorError5) {
-            throw _iteratorError5;
+          if (_didIteratorError9) {
+            throw _iteratorError9;
           }
         }
       }

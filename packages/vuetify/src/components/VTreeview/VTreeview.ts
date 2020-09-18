@@ -238,7 +238,7 @@ export default mixins(
         }
 
         // Don't forget to rebuild cache
-        if (this.nodes[key].isSelected && (this.selectionType === 'independent' || node.children.length === 0)) this.selectedCache.add(key)
+        if (this.nodes[key].isSelected && ((this.selectionType === 'independent') || (this.selectionType === 'leaf' && node.children.length === 0) || (this.selectionType === 'group' && node.children.length > 0))) this.selectedCache.add(key)
         if (this.nodes[key].isActive) this.activeCache.add(key)
         if (this.nodes[key].isOpen) this.openCache.add(key)
 

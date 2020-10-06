@@ -344,9 +344,13 @@ export default mixins(RegistrableProvide('treeview'), Themeable
         for (const parent of this.getParents(key)) {
           let parentOldState = this.nodes[parent].isSelected;
           const calculated = this.calculateState(parent, this.nodes);
-          this.nodes[parent].isSelected = calculated.isSelected;
-          this.nodes[parent].isIndeterminate = calculated.isIndeterminate;
-          changed.set(parent, calculated.isSelected);
+          console.log(this.nodes[parent]); // @ts-ignore
+
+          if (this.nodes[parent].vnode.level !== 0) {
+            this.nodes[parent].isSelected = calculated.isSelected;
+            this.nodes[parent].isIndeterminate = calculated.isIndeterminate;
+            changed.set(parent, calculated.isSelected);
+          }
 
           if (this.nodes[parent].isIndeterminate === false && changed.get(parent) === true) {
             for (const key of this.nodes[parent].children) {

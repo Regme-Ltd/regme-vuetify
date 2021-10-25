@@ -525,8 +525,6 @@ var _default2 = (0, _mixins.default)((0, _registrable.provide)('treeview'), _the
 
             var _calculated2 = this.calculateState(_parent, this.nodes);
 
-            console.log(this.nodes[_parent]); // @ts-ignore
-
             if (this.nodes[_parent].vnode.level !== 0) {
               this.nodes[_parent].isSelected = _calculated2.isSelected;
               this.nodes[_parent].isIndeterminate = _calculated2.isIndeterminate;

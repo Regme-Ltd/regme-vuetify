@@ -344,7 +344,6 @@ export default mixins(RegistrableProvide('treeview'), Themeable
         for (const parent of this.getParents(key)) {
           let parentOldState = this.nodes[parent].isSelected;
           const calculated = this.calculateState(parent, this.nodes);
-          console.log(this.nodes[parent]); // @ts-ignore
 
           if (this.nodes[parent].vnode.level !== 0) {
             this.nodes[parent].isSelected = calculated.isSelected;
